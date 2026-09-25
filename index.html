@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Capricho de Costa del Silencio — Carta y Tienda Gourmet</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg: #ece1c7;
+    --bg-elev: #f6efdc;
+    --bg-panel: #e4d7b8;
+    --ink: #2b2115;
+    --ink-soft: #6b5a41;
+    --ink-faint: #8d7a5c;
+    --accent: #8a6423;
+    --accent-2: #7a2331;
+    --rule: rgba(43,33,21,0.22);
+    --rule-strong: rgba(43,33,21,0.38);
+    --chip-bg: rgba(43,33,21,0.06);
+    --chip-bg-active: #2b2115;
+    --chip-ink-active: #ece1c7;
+    --row-hover: rgba(43,33,21,0.045);
+    --shadow: 0 10px 30px rgba(43,33,21,0.14);
+    --stamp-ink: #8a6423;
+
+    --serif: 'Iowan Old Style','Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+    --sans: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #14140d;
+      --bg-elev: #1c1b12;
+      --bg-panel: #201f15;
+      --ink: #ece3ce;
+      --ink-soft: #b3a482;
+      --ink-faint: #7d7256;
+      --accent: #cba15e;
+      --accent-2: #b16b6a;
+      --rule: rgba(236,227,206,0.14);
+      --rule-strong: rgba(236,227,206,0.26);
+      --chip-bg: rgba(236,227,206,0.07);
+      --chip-bg-active: #ece3ce;
+      --chip-ink-active: #14140d;
+      --row-hover: rgba(236,227,206,0.045);
+      --shadow: 0 10px 30px rgba(0,0,0,0.45);
+      --stamp-ink: #cba15e;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #14140d; --bg-elev: #1c1b12; --bg-panel: #201f15;
+    --ink: #ece3ce; --ink-soft: #b3a482; --ink-faint: #7d7256;
+    --accent: #cba15e; --accent-2: #b16b6a;
+    --rule: rgba(236,227,206,0.14); --rule-strong: rgba(236,227,206,0.26);
+    --chip-bg: rgba(236,227,206,0.07); --chip-bg-active:#ece3ce; --chip-ink-active:#14140d;
+    --row-hover: rgba(236,227,206,0.045); --shadow: 0 10px 30px rgba(0,0,0,0.45); --stamp-ink:#cba15e;
+  }
+  :root[data-theme="light"]{
+    --bg: #ece1c7; --bg-elev:#f6efdc; --bg-panel:#e4d7b8;
+    --ink:#2b2115; --ink-soft:#6b5a41; --ink-faint:#8d7a5c;
+    --accent:#8a6423; --accent-2:#7a2331;
+    --rule: rgba(43,33,21,0.22); --rule-strong: rgba(43,33,21,0.38);
+    --chip-bg: rgba(43,33,21,0.06); --chip-bg-active:#2b2115; --chip-ink-active:#ece1c7;
+    --row-hover: rgba(43,33,21,0.045); --shadow: 0 10px 30px rgba(43,33,21,0.14); --stamp-ink:#8a6423;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+  }
+  body::before{
+    content:"";
+    position: fixed; inset:0; pointer-events:none; z-index:0;
+    opacity:.5; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
+  }
+  @media (prefers-color-scheme: dark){ body::before{ mix-blend-mode: screen; } }
+  :root[data-theme="dark"] body::before{ mix-blend-mode: screen; }
+  :root[data-theme="light"] body::before{ mix-blend-mode: multiply; }
+
+  a{ color: inherit; }
+  ::selection{ background: var(--accent); color: var(--bg); }
+
+  :focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  h1,h2,h3{ text-wrap: balance; margin: 0; }
+
+  .wrap{ max-width: 980px; margin: 0 auto; padding: 0 clamp(14px,4vw,32px); position:relative; z-index:1; }
+
+  /* ---------- header ---------- */
+  header.top{
+    position: sticky; top:0; z-index: 20;
+    background: var(--bg-elev);
+    box-shadow: var(--shadow);
+  }
+  /* mobile-first header: row 1 = hamburger / logo / language, row 2 = subtitle (wraps full width) */
+  .top-inner{
+    max-width: 980px; margin:0 auto;
+    padding: 14px 14px 16px;
+    display:flex; align-items:center; flex-wrap: wrap; gap: 10px 12px;
+  }
+  .hamburger{
+    order: 1; flex: none;
+    width: 48px; height: 48px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 12px;
+    border: 1px solid var(--rule-strong);
+    background: var(--chip-bg);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .hamburger:hover{ border-color: var(--accent); }
+  .logo-plaque{
+    order: 2; flex: none;
+    margin: 0 auto;
+    background: #f8f4e6;
+    border-radius: 10px;
+    padding: 6px 14px;
+    box-shadow: var(--shadow);
+    display:flex; align-items:center;
+    transform: rotate(-1.2deg);
+  }
+  .logo-img{
+    display:block;
+    height: clamp(34px, 10vw, 48px);
+    width: auto;
+    max-width: 100%;
+  }
+  .brand-block{ order: 4; flex: 1 1 100%; text-align: center; }
+  .brand-tag{
+    margin-top: 2px;
+    font-family: var(--mono);
+    font-size: .85rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .lang-toggle{ order: 3; flex: none; }
+  .lang-select{
+    font-family: var(--mono); font-size: 1rem; letter-spacing:.05em;
+    min-height: 48px;
+    padding: 8px 34px 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--rule-strong);
+    background: var(--chip-bg);
+    color: var(--ink);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b5a41' stroke-width='2'><path d='m6 9 6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+  }
+  .lang-select:hover{ border-color: var(--accent); }
+  .row-gloss{
+    font-family: var(--sans); font-style: italic;
+    font-size: .875rem; color: var(--ink-faint);
+    margin-left: 6px;
+  }
+
+  @media (min-width: 768px){
+    .top-inner{
+      flex-wrap: nowrap;
+      padding: clamp(18px,3vw,28px) clamp(14px,4vw,32px) 20px;
+      gap: 20px;
+    }
+    .hamburger{ display:none; }
+    .logo-plaque{ order:0; margin:0; padding: 8px 16px; }
+    .logo-img{ height: clamp(40px, 7vw, 54px); }
+    .brand-block{ order:0; flex: 1 1 220px; min-width: 200px; text-align: left; }
+    .brand-tag{ font-size: .72rem; letter-spacing: .1em; }
+    .lang-toggle{ order:0; margin-left: auto; }
+    .lang-select{ font-size: .72rem; min-height: 0; padding: 8px 30px 8px 14px; }
+  }
+
+  /* perforated ticket line under header */
+  .perf{
+    height: 12px;
+    background-image: radial-gradient(circle at center, var(--bg) 2.6px, transparent 2.9px);
+    background-size: 16px 12px;
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+
+  /* ---------- category navigation: full-screen drawer on mobile, sticky bar on desktop ---------- */
+  nav.rail{
+    position: fixed; inset: 0; z-index: 30;
+    background: var(--bg-elev);
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  nav.rail.open{ opacity: 1; pointer-events: auto; }
+  @media (prefers-reduced-motion: reduce){ nav.rail{ transition:none; } }
+  .rail-head{
+    flex: none;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .rail-head-title{
+    font-family: var(--serif); font-weight:600; font-size: 1.25rem;
+  }
+  .rail-close{
+    flex:none; width:48px; height:48px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 12px; border: 1px solid var(--rule-strong);
+    background: var(--chip-bg); color: var(--ink);
+    font-size: 1.4rem; line-height:1; cursor:pointer;
+  }
+  .rail-inner{
+    flex: 1 1 auto; overflow-y: auto;
+    max-width: 980px; width:100%; margin:0 auto;
+    padding: 10px 14px 24px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .chip{
+    display:flex; align-items:center;
+    min-height: 48px;
+    font-family: var(--serif); font-size: 1.0625rem;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: var(--chip-bg);
+    border: 1px solid transparent;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    transition: background .15s ease, color .15s ease;
+  }
+  @media (prefers-reduced-motion: reduce){ .chip{ transition:none; } }
+  .chip:hover{ border-color: var(--rule-strong); }
+  .chip.active{ background: var(--chip-bg-active); color: var(--chip-ink-active); }
+
+  @media (min-width: 768px){
+    nav.rail{
+      position: sticky; inset:auto; top: 0; z-index: 19;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--rule);
+      opacity:1; pointer-events:auto;
+      display:block;
+    }
+    .rail-head{ display:none; }
+    .rail-inner{
+      padding: 10px clamp(14px,4vw,32px);
+      flex-direction:row; gap:8px; overflow-x:auto; overflow-y:visible;
+      scrollbar-width: thin;
+    }
+    .rail-inner::-webkit-scrollbar{ height:5px; }
+    .rail-inner::-webkit-scrollbar-thumb{ background: var(--rule-strong); border-radius:4px; }
+    .chip{
+      flex:none; min-height:0;
+      font-family: var(--mono); font-size: .72rem; letter-spacing:.04em;
+      text-transform: uppercase;
+      padding: 7px 13px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+  }
+
+  /* ---------- main / sections ---------- */
+  main{ padding-top: clamp(28px,4vw,44px); padding-bottom: 60px; }
+
+  section.cat{ margin-bottom: clamp(34px,5vw,52px); scroll-margin-top: 118px; }
+
+  .cat-head{
+    display:flex; align-items:flex-end; gap: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 18px;
+  }
+  .cat-badge{
+    flex:none; width:40px; height:40px; border-radius:50%;
+    border: 1px dashed var(--stamp-ink);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--mono); font-size:.82rem; color: var(--stamp-ink);
+  }
+  .cat-title{
+    font-family: var(--serif); font-weight:600;
+    font-size: clamp(1.375rem, 5vw, 1.6rem);
+    flex: 1 1 auto;
+  }
+  .row-num{
+    flex: none;
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: .85rem; color: var(--ink-faint);
+    min-width: 2.6em;
+    padding-top: 2px;
+  }
+
+  /* mobile-first: single column always; more columns only once there is real room */
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+  }
+  @media (min-width: 700px){
+    .grid{
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      column-gap: 34px;
+    }
+  }
+
+  .row{
+    display:flex; align-items:flex-start; gap:12px;
+    padding: 14px 6px;
+    min-height: 48px;
+    border-bottom: 1px dotted var(--rule-strong);
+  }
+  .row:hover{ background: var(--row-hover); }
+  .row-main{ flex: 1 1 auto; min-width:0; }
+  .row-name{
+    font-family: var(--serif); font-size: 1.0625rem; line-height:1.4;
+    display:inline;
+  }
+  .row-tag{
+    font-family: var(--mono); font-size: .7rem; letter-spacing:.08em;
+    color: var(--accent-2); border: 1px solid var(--accent-2);
+    border-radius: 3px; padding: 2px 6px; margin-left:7px;
+    vertical-align: 2px; white-space:nowrap;
+  }
+  .row-desc{
+    display:block; font-family: var(--sans); font-style: italic;
+    font-size: .875rem; color: var(--ink-soft); margin-top: 4px; line-height:1.4;
+  }
+  .leader{
+    flex: 1 1 auto; min-width: 14px;
+    border-bottom: 1px dotted var(--rule);
+    align-self: flex-end;
+    margin-bottom: 6px;
+  }
+  .row-price{
+    flex: none;
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: 1.0625rem; font-weight: 600; color: var(--accent);
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+
+  footer{
+    max-width: 980px; margin: 0 auto; padding: 28px clamp(14px,4vw,32px) 70px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint); font-size: .9rem;
+    display:flex; justify-content: space-between; gap:16px 24px; flex-wrap:wrap;
+  }
+  footer .fnote{ font-family: var(--serif); font-style: italic; line-height: 1.6; }
+  footer .fnote b{ font-style: normal; font-weight: 600; color: var(--ink-soft); }
+  footer .fmono{ font-family: var(--mono); letter-spacing:.04em; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <button type="button" class="hamburger" id="hamburgerBtn" aria-expanded="false" aria-controls="navRail" aria-label="Abrir menú de categorías">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+    </button>
+    <div class="logo-plaque">
+      <img class="logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAABuCAYAAADRXOEbAAAACXBIWXMAAAsTAAALEwEAmpwYAAAGOmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgMTAuMC1jMDAwIDc5LmQyMGU0NjYzMCwgMjAyNS8xMi8wOS0wMjoxMToyMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI3LjggKE1hY2ludG9zaCkiIHhtcDpDcmVhdGVEYXRlPSIyMDI2LTA3LTIyVDEwOjQxOjQ5KzAxOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyNi0wNy0yMlQxMTo1MToxNCswMTowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNi0wNy0yMlQxMTo1MToxNCswMTowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6YjZmZjM0NTctOGMyZC00MDJhLTkzZTUtOGQ5YmEwZjYyMTU4IiB4bXBNTTpEb2N1bWVudElEPSJhZG9iZTpkb2NpZDpwaG90b3Nob3A6ZTk5N2Q2OWMtNGFhZi03YzRkLWE2MTYtZmUxMGM4ZGFjN2Q2IiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6NjM2ODcwNDgtN2ZiNi00Zjc5LWE4YTctNDY3MmQ3M2FiOTZhIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo2MzY4NzA0OC03ZmI2LTRmNzktYThhNy00NjcyZDczYWI5NmEiIHN0RXZ0OndoZW49IjIwMjYtMDctMjJUMTA6NDE6NDkrMDE6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyNy44IChNYWNpbnRvc2gpIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJjb252ZXJ0ZWQiIHN0RXZ0OnBhcmFtZXRlcnM9ImZyb20gYXBwbGljYXRpb24vdm5kLmFkb2JlLnBob3Rvc2hvcCB0byBpbWFnZS9wbmciLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmI2ZmYzNDU3LThjMmQtNDAyYS05M2U1LThkOWJhMGY2MjE1OCIgc3RFdnQ6d2hlbj0iMjAyNi0wNy0yMlQxMTo1MToxNCswMTowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDI3LjggKE1hY2ludG9zaCkiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+5TOtQwAASK9JREFUeJztfQe4FcX5/rCzoGIjGmuwR7HHrrFEE1ssMVEjajQaE41RY0+MJRrFhl1jLDFGsWCwBmtsP4MdUMGKWFCwoiCiIAju3PN/3pN3zv+7c2fbOedW5n2efeDu2ZmdbfPN196vV6VSUQEBAQEBAQEBdUPreF2t44e0jr/ROp6jdXyv1vGA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" width="500" height="110" alt="El Capricho de Costa del Silencio — Gourmet, Catas &amp; Tienda / Gourmet, Tastings &amp; Shop">
+    </div>
+    <div class="brand-block">
+      <div class="brand-tag"><span id="brandSubtitle"></span></div>
+    </div>
+    <div class="lang-toggle">
+      <select class="lang-select" id="langSelect" aria-label="Idioma / Language">
+        <option value="es">ES</option>
+        <option value="en">EN</option>
+        <option value="fr">FR</option>
+        <option value="de">DE</option>
+        <option value="nl">NL</option>
+        <option value="ru">RU</option>
+        <option value="it">IT</option>
+        <option value="pt">PT</option>
+      </select>
+    </div>
+  </div>
+  <div class="perf" aria-hidden="true"></div>
+</header>
+
+<nav class="rail" id="navRail" aria-label="Categorías de la carta" aria-hidden="true">
+  <div class="rail-head">
+    <span class="rail-head-title">Categorías</span>
+    <button type="button" class="rail-close" id="railClose" aria-label="Cerrar menú">✕</button>
+  </div>
+  <div class="rail-inner" id="rail"></div>
+</nav>
+
+<main class="wrap">
+  <div id="catalog"></div>
+</main>
+
+<script src="menu-data.js"></script>
+
+<footer>
+  <div class="fnote"><b>El Capricho de Costa del Silencio</b><br>
+    C.C. Chaparral, Av. José Antonio Tavío · 38630 Costa del Silencio, Santa Cruz de Tenerife<br>
+    Tel. 623 97 28 47
+  </div>
+  <span class="fmono" id="footerLegal"></span>
+</footer>
+
+<script>
+(function(){
+  var STR = {
+    es: { subtitle:"Gourmet, Catas & Tienda", shopTag:"Tienda", priceNote:"PRECIOS EN EUROS · IGIC INCLUIDO" },
+    en: { subtitle:"Gourmet, Tastings & Shop", shopTag:"Shop", priceNote:"PRICES IN EUROS · IGIC INCLUDED" },
+    fr: { subtitle:"Gourmet, Dégustations & Boutique", shopTag:"Boutique", priceNote:"PRIX EN EUROS · IGIC INCLUS" },
+    de: { subtitle:"Gourmet, Verkostungen & Laden", shopTag:"Laden", priceNote:"PREISE IN EURO · IGIC INBEGRIFFEN" },
+    nl: { subtitle:"Gourmet, Proeverijen & Winkel", shopTag:"Winkel", priceNote:"PRIJZEN IN EURO · IGIC INBEGREPEN" },
+    ru: { subtitle:"Гурме, дегустации и магазин", shopTag:"Магазин", priceNote:"ЦЕНЫ В ЕВРО · IGIC ВКЛЮЧЁН" },
+    it: { subtitle:"Gourmet, Degustazioni & Negozio", shopTag:"Negozio", priceNote:"PREZZI IN EURO · IGIC INCLUSA" },
+    pt: { subtitle:"Gourmet, Provas & Loja", shopTag:"Loja", priceNote:"PREÇOS EM EUROS · IGIC INCLUÍDO" }
+  };
+  var LANGS = ["es","en","fr","de","nl","ru","it","pt"];
+  function nameFor(it,lang){ return lang==="en" ? (it.en || it.es) : it.es; }
+  function glossFor(it,lang){ return (lang!=="es" && lang!=="en" && it.en) ? it.en : null; }
+  function descFor(it,lang){
+    if(lang==="es") return it.descEs;
+    var key = "desc" + lang.charAt(0).toUpperCase() + lang.slice(1);
+    return it[key] || it.descEn || it.descEs;
+  }
+
+  var DATA = [
+    {es:"Productos en mesa", en:"At the table", fr:"À table", de:"Am Tisch", nl:"Aan tafel", ru:"За столом", it:"A tavola", pt:"À mesa", items:[
+      {es:"1/2 racion queso de mezcla", en:"Half portion mixed cheese", price:"5.80 €"},
+      {es:"1/2 jamon 100%", en:"Half portion 100% Ibérico ham", price:"12.40 €"},
+      {es:"racion 100%", en:"Full portion 100% Ibérico ham", price:"21.60 €"},
+      {es:"1 racion queso de mezcla", en:"Full portion mixed cheese", price:"9.50 €"},
+      {es:"tabla mixta", en:"Mixed board", price:"14.60 €",
+        descEs:"tabla conbinada productos ibericos y quesos", descEn:"combined board of Ibérico products and cheeses", descFr:"planche combinée de produits ibériques et fromages", descDe:"kombinierte Platte mit Ibérico-Produkten und Käse", descNl:"gecombineerde plank met Ibérico-producten en kaas", descRu:"ассорти из продуктов иберико и сыров", descIt:"tagliere misto di prodotti iberici e formaggi", descPt:"tábua combinada de produtos ibéricos e queijos"},
+      {es:"tabla de ibericos", en:"Ibérico board", price:"11.40 €",
+        descEs:"jamon iberico, chorizo, salchichon, morcon", descEn:"Ibérico ham, chorizo, salchichón, morcón", descFr:"jambon ibérique, chorizo, salchichón, morcón", descDe:"Ibérico-Schinken, Chorizo, Salchichón, Morcón", descNl:"Ibérico-ham, chorizo, salchichón, morcón", descRu:"хамон иберико, чоризо, сальчичон, морсон", descIt:"prosciutto iberico, chorizo, salchichón, morcón", descPt:"presunto ibérico, chorizo, salchichão, morcón"},
+      {es:"1 racion queso curado oveja premium", en:"Full portion premium cured sheep cheese", price:"10.50 €"},
+      {es:"Pan con aceite de la sierra de cazorla", en:"Bread with Sierra de Cazorla olive oil", price:"2.50 €"},
+      {es:"Papas Lolita - Gourmet", en:"Lolita potato crisps – Gourmet", price:"2.20 €"},
+      {es:"1/2 racion cebo a maquina", en:"Half portion machine-sliced cebo", price:"8.50 €"},
+      {es:"1 racion cebo de campo a maquina", en:"Full portion machine-sliced cebo de campo", price:"12.80 €"},
+      {es:"Tabla degustación quesos del mundo", en:"World cheese tasting board", price:"22.40 €"},
+      {es:"-Chocolatina al whisky", en:"-Whisky chocolate bar", price:"11.00 €"},
+      {es:"-Chocolates Lava Canarias", en:"-Canarian lava chocolates", price:"10.25 €"},
+      {es:"-Chocolate Velga Bliss", en:"-Belgian Bliss chocolate", price:"22.90 €"},
+      {es:"-Bombones Pralibel", en:"-Pralibel pralines", price:"26.10 €"},
+      {es:"-Tejas mixtas", en:"-Mixed tejas (almond tuiles)", price:"15.00 €"},
+      {es:"Tosta de ibericos", en:"Ibérico toast", price:"3.90 €"},
+      {es:"1/2 jamon iberico cebo", en:"Half portion Ibérico cebo ham", price:"5.80 €"},
+      {es:"Racion papas lolita premium", en:"Lolita crisps, premium portion", price:"1.20 €"},
+      {es:"TOSTADAS DE JAMON", en:"HAM TOASTS", price:"1.80 €"},
+      {es:"TOSTADAS DE QUESO", en:"CHEESE TOASTS", price:"1.80 €"},
+      {es:"1/2 QUESO CURADO OVEJA PREMIUM", en:"HALF PORTION PREMIUM CURED SHEEP CHEESE", price:"5.00 €"},
+      {es:"Tapitas", en:"Little bites (tapitas)", price:"4.99 €"}
+    ]},
+    {es:"Platos elaborados con conservas", en:"Dishes made with preserves", fr:"Plats à base de conserves", de:"Gerichte mit Konserven", nl:"Gerechten met conserven", ru:"Блюда из консервов", it:"Piatti con conserve", pt:"Pratos com conservas", items:[
+      {es:"Arbejas", en:"Baby peas", price:"8.50 €"},
+      {es:"Carrilleras de Ternera Guisadas", en:"Braised beef cheeks", price:"10.50 €"},
+      {es:"Pimientos Rellenos de Bonito", en:"Peppers stuffed with tuna", price:"7.15 €"},
+      {es:"Bonito a la Sidra", en:"Tuna in cider sauce", price:"10.50 €"},
+      {es:"Fabada Asturiana", en:"Asturian bean stew (fabada)", price:"8.60 €"}
+    ]},
+    {es:"Conservas Cambados", en:"Cambados preserves", fr:"Conserves de Cambados", de:"Konserven aus Cambados", nl:"Conserven uit Cambados", ru:"Консервы Камбадос", it:"Conserve di Cambados", pt:"Conservas de Cambados", items:[
+      {es:"Agujas de las rias baixas", en:"Garfish from the Rías Baixas", price:"7.00 €"},
+      {es:"Berberechos", en:"Cockles", price:"12.75 €"},
+      {es:"Boquerones del cantabrico", en:"Cantabrian white anchovies", price:"12.75 €"},
+      {es:"Chipirones aove", en:"Baby squid in olive oil", price:"10.42 €"},
+      {es:"Chipirones en su tinta", en:"Baby squid in its ink", price:"11.50 €"},
+      {es:"Navajas alnatural", en:"Razor clams, natural", price:"11.50 €"},
+      {es:"Zamburiñas en salsa gallega edición limitada", en:"Queen scallops in Galician sauce, limited edition", price:"10.50 €"},
+      {es:"Zamburiñas en salsa gallega", en:"Queen scallops in Galician sauce", price:"6.70 €"},
+      {es:"Pulpo en aceite de oliva", en:"Octopus in olive oil", price:"8.50 €"},
+      {es:"Berberechos  rias baixas", en:"Cockles, Rías Baixas", price:"16.50 €"},
+      {es:"Ventresca", en:"Tuna belly (ventresca)", price:"12.12 €"},
+      {es:"Huevas de merluza", en:"Hake roe", price:"7.80 €"}
+    ]},
+    {es:"Conservas Real Conservera", en:"Real Conservera preserves", fr:"Conserves Real Conservera", de:"Konserven Real Conservera", nl:"Conserven Real Conservera", ru:"Консервы Real Conservera", it:"Conserve Real Conservera", pt:"Conservas Real Conservera", items:[
+      {es:"ventresca aove", en:"tuna belly in olive oil", price:"10.40 €"},
+      {es:"zamburiñas en salsa", en:"queen scallops in sauce", price:"8.40 €"},
+      {es:"navajas 7/10", en:"razor clams 7/10", price:"25.20 €"},
+      {es:"sardinillas aove", en:"baby sardines in olive oil", price:"10.95 €"},
+      {es:"mejillones en escabeche", en:"mussels in escabeche", price:"12.80 €"},
+      {es:"Berberechos grandes", en:"large cockles", price:"27.96 €"}
+    ]},
+    {es:"Anchoas", en:"Anchovies", fr:"Anchois", de:"Sardellen", nl:"Ansjovis", ru:"Анчоусы", it:"Acciughe", pt:"Anchovas", items:[
+      {es:"anchoas lata pequeña", en:"small tin of anchovies", price:"7.80 €"},
+      {es:"anchoas premium", en:"premium anchovies", price:"18.60 €"},
+      {es:"Anchoas mantequilla", en:"anchovies in butter", price:"9.60 €"}
+    ]},
+    {es:"Loncheados", en:"Sliced Ibéricos", fr:"Ibériques tranchés", de:"Geschnittene Ibérico-Produkte", nl:"Gesneden Ibérico", ru:"Нарезка иберико", it:"Iberici affettati", pt:"Ibéricos fatiados", items:[
+      {es:"Jamon 100% 80gr", en:"100% Ibérico ham 80g", price:"15.95 €"},
+      {es:"Presa iberica 80gr", en:"Ibérico presa 80g", price:"8.50 €"},
+      {es:"Lomo iberico 80gr", en:"Ibérico loin 80g", price:"8.90 €"},
+      {es:"Salchichon bellota", en:"Bellota salchichón", price:"3.90 €"},
+      {es:"Morcon iberico", en:"Ibérico morcón", price:"7.50 €"},
+      {es:"Lomo iberico cebo", en:"Ibérico cebo loin", price:"6.95 €"},
+      {es:"Chorizo iberico", en:"Ibérico chorizo", price:"3.80 €"},
+      {es:"Jamon 50% cebo", en:"50% cebo ham", price:"7.95 €"},
+      {es:"Jamon 50% cebo de campo", en:"50% cebo de campo ham", price:"11.95 €"}
+    ]},
+    {es:"Taquitos", en:"Bite-size cubes", fr:"Petits cubes", de:"Kleine Würfel", nl:"Kleine blokjes", ru:"Кубики (тапас)", it:"Cubetti", pt:"Cubinhos", items:[
+      {es:"Taquitos de Jamón Ibérico", en:"Ibérico ham cubes", price:"3.50 €"},
+      {es:"Taquitos de embutidos", en:"Cured-meat cubes", price:"3.50 €"},
+      {es:"Taquitos 100%", en:"100% Ibérico cubes", price:"4.50 €"}
+    ]},
+    {es:"Bocadillos ibéricos", en:"Ibérico sandwiches", fr:"Sandwichs ibériques", de:"Ibérico-Sandwiches", nl:"Ibérico-broodjes", ru:"Бутерброды иберико", it:"Panini iberici", pt:"Sanduíches ibéricas", items:[
+      {es:"1/2 bocadillo jamon iberico", en:"1/2 Ibérico ham sandwich", price:"3.45 €"},
+      {es:"Bocadillo jamon iberico", en:"Ibérico ham sandwich", price:"5.75 €"},
+      {es:"Bocadillo chorizo iberico", en:"Ibérico chorizo sandwich", price:"2.20 €"},
+      {es:"Bocadillo de  Salchichon iberico", en:"Ibérico salchichón sandwich", price:"2.20 €"},
+      {es:"-1/2 bocadillo chorizo ibérico", en:"-1/2 Ibérico chorizo sandwich", price:"1.95 €"},
+      {es:"-1/2 bocadillo salchichón ibérico", en:"-1/2 Ibérico salchichón sandwich", price:"1.95 €"},
+      {es:"Bocadillo queso curado", en:"Cured cheese sandwich", price:"3.00 €"}
+    ]},
+    {es:"Montaditos", en:"Montaditos (mini sandwiches)", fr:"Montaditos (mini-sandwichs)", de:"Montaditos (Mini-Sandwiches)", nl:"Montaditos (minibroodjes)", ru:"Монтадитос (мини-бутерброды)", it:"Montaditos (mini panini)", pt:"Montaditos (mini-sanduíches)", items:[
+      {es:"MONTADITOS", en:"MONTADITOS (mini sandwiches)", price:"3.50 €"}
+    ]},
+    {es:"Quesos", en:"Cheeses", fr:"Fromages", de:"Käse", nl:"Kazen", ru:"Сыры", it:"Formaggi", pt:"Queijos", items:[
+      {es:"Cuña de queso", en:"Cheese wedge", price:"6.50 €"},
+      {es:"almogrote 220gr", en:"Almogrote 220g", price:"8.30 €"},
+      {es:"Cuña de queso mezcla vaca,cabra y oveja", en:"Mixed cow, goat & sheep cheese wedge", price:"7.50 €"},
+      {es:"Cuña oveja premium", en:"Premium sheep cheese wedge", price:"9.50 €"},
+      {es:"Cuña queso cabra semi", en:"Semi-cured goat cheese wedge", price:"7.50 €"}
+    ]},
+    {es:"Snacks", en:"Snacks", fr:"Snacks", de:"Snacks", nl:"Snacks", ru:"Снеки", it:"Snack", pt:"Snacks", items:[
+      {es:"Papas Lolita - Original", en:"Lolita crisps – Original", price:"2.50 €"},
+      {es:"TORREZNOS.  400gr", en:"PORK CRACKLINGS 400g", price:"4.50 €"},
+      {es:"Aceitunas chupadedos", en:"Chupadedos olives (finger-licking)", price:"4.50 €"},
+      {es:"sardinillas aove", en:"baby sardines in olive oil", price:"11.80 €"},
+      {es:"TORREZNOS 200GR", en:"PORK CRACKLINGS 200g", price:"6.50 €"},
+      {es:"Aceitunas lets go", en:"Let's Go olives", price:"1.50 €"}
+    ]},
+    {es:"Smoothies", en:"Smoothies", fr:"Smoothies", de:"Smoothies", nl:"Smoothies", ru:"Смузи", it:"Frullati", pt:"Smoothies", items:[
+      {es:"SMOOTHIES - batidos de fruta", en:"SMOOTHIES – fruit shakes", price:"4.50 €"}
+    ]},
+    {es:"Café", en:"Coffee", fr:"Café", de:"Kaffee", nl:"Koffie", ru:"Кофе", it:"Caffè", pt:"Café", items:[
+      {es:"CAFE", en:"COFFEE", price:"1.60 €"}
+    ]},
+    {es:"Vino por copas", en:"Wine by the glass", fr:"Vin au verre", de:"Wein im Glas", nl:"Wijn per glas", ru:"Вино бокалами", it:"Vino al calice", pt:"Vinho a copo", items:[
+      {es:"Copa vino blanco afrutado canario", en:"Glass of Canarian fruity white", price:"3.90 €"},
+      {es:"Copa tinto rioja", en:"Glass of red Rioja", price:"3.90 €"},
+      {es:"Copa vino blanco seco", en:"Glass of dry white wine", price:"3.90 €"},
+      {es:"Copa tinto rivera", en:"Glass of Ribera red", price:"3.90 €"},
+      {es:"Copa vino Yaiza afrutado", en:"Glass of Yaiza fruity wine", price:"4.90 €"},
+      {es:"Copa vino el salvio", en:"Glass of El Salvio wine", price:"4.90 €"}
+    ]},
+    {es:"Vino blanco afrutado", en:"Fruity white wine", fr:"Vin blanc fruité", de:"Fruchtiger Weißwein", nl:"Fruitige witte wijn", ru:"Фруктовое белое вино", it:"Vino bianco fruttato", pt:"Vinho branco frutado", items:[
+      {es:"Vino Blanco  Afrutado  tajinaste tenerife", en:"Tajinaste fruity white wine, Tenerife", price:"15.50 €"},
+      {es:"Locartas blanco afrutado", en:"Locartas fruity white", price:"12.50 €"},
+      {es:"Vino afrutado la jirafa", en:"La Jirafa fruity white wine", price:"14.50 €"},
+      {es:"Flor de chasna afrutado", en:"Flor de Chasna fruity white", price:"13.50 €"},
+      {es:"Copa vino blanco afrutado", en:"Glass of fruity white wine", price:"3.90 €"}
+    ]},
+    {es:"Vino blanco seco", en:"Dry white wine", fr:"Vin blanc sec", de:"Trockener Weißwein", nl:"Droge witte wijn", ru:"Сухое белое вино", it:"Vino bianco secco", pt:"Vinho branco seco", items:[
+      {es:"Vino Blanco Carramimbre Blanco", en:"Carramimbre dry white wine", price:"12.90 €"},
+      {es:"Vino O Luar do Sil – Godello 75 cl", en:"O Luar do Sil, Godello 75cl", price:"19.95 €"},
+      {es:"Gran feudo hoya de lobos", en:"Gran Feudo, Hoya de Lobos", price:"12.50 €"},
+      {es:"Hermanos lurton blanco rueda", en:"Hermanos Lurton white Rueda", price:"16.50 €"},
+      {es:"Locartas blanco seco", en:"Locartas dry white", price:"12.50 €"},
+      {es:"Alvariño ofillo da condesa", en:"Albariño, Ofillo da Condesa", price:"14.50 €"},
+      {es:"CAPELLANES BLANCO SECO", en:"CAPELLANES DRY WHITE", price:"16.50 €"}
+    ]},
+    {es:"Vino tinto", en:"Red wine", fr:"Vin rouge", de:"Rotwein", nl:"Rode wijn", ru:"Красное вино", it:"Vino rosso", pt:"Vinho tinto", items:[
+      {es:"Vino Tinto Carramimbre Roble", en:"Carramimbre Roble red wine", price:"12.50 €"},
+      {es:"Juan gil jumilla", en:"Juan Gil, Jumilla", price:"13.60 €"},
+      {es:"Vino la planta tinto rduero", en:"La Planta red, Ribera del Duero", price:"12.50 €"},
+      {es:"Pesquera rduero", en:"Pesquera, Ribera del Duero", price:"29.50 €"},
+      {es:"Capellanes roble", en:"Capellanes Roble", price:"26.50 €"},
+      {es:"Capellanes Crianza gran reserva", en:"Capellanes Gran Reserva Crianza", price:"39.50 €"},
+      {es:"Vino locartas tinto", en:"Locartas red wine", price:"12.50 €"},
+      {es:"Vino Tinto salvio", en:"El Salvio red wine", price:"19.80 €"},
+      {es:"Roquesan rivera del duero", en:"Roquesan, Ribera del Duero", price:"12.40 €"},
+      {es:"Vino Tinto viña salceda rioja", en:"Viña Salceda red Rioja", price:"11.64 €"}
+    ]},
+    {es:"Vermú", en:"Vermouth", fr:"Vermouth", de:"Wermut", nl:"Vermout", ru:"Вермут", it:"Vermut", pt:"Vermute", items:[
+      {es:"Peregrino blanco", en:"Peregrino white vermouth", price:"14.50 €"},
+      {es:"Vermu copa", en:"Glass of vermouth", price:"3.90 €"},
+      {es:"Peregrino rojo", en:"Peregrino red vermouth", price:"14.50 €"},
+      {es:"Cabecita loca", en:"Cabecita Loca vermouth", price:"19.80 €"},
+      {es:"Ruaviejo miniatura digestivo", en:"Ruavieja digestif miniature", price:"2.50 €"}
+    ]},
+    {es:"Cavas", en:"Cava", fr:"Cava", de:"Cava", nl:"Cava", ru:"Кава", it:"Cava", pt:"Cava", items:[
+      {es:"Cava perelada brut", en:"Perelada Brut cava", price:"10.18 €"},
+      {es:"Cava pedrelara brut rose", en:"Perelada Brut Rosé cava", price:"11.42 €"},
+      {es:"Cava Gran Gesta Reserva Especial", en:"Gran Gesta Special Reserve cava", price:"14.95 €"},
+      {es:"Cava Rosé Brut – Montse", en:"Montse Rosé Brut cava", price:"10.95 €"},
+      {es:"Copa de cava PERELADA", en:"Glass of Perelada cava", price:"4.50 €"}
+    ]},
+    {es:"Champán y cavas", en:"Champagne & cava", fr:"Champagne & cava", de:"Champagner & Cava", nl:"Champagne & cava", ru:"Шампанское и кава", it:"Champagne e cava", pt:"Champanhe e cava", items:[
+      {es:"Espumoso CHAMPAN VEUVE CLICQUOT", en:"Veuve Clicquot Champagne", price:"64.80 €"},
+      {es:"Espumoso CHAMPAN MOET CHANDOM", en:"Moët & Chandon Champagne", price:"48.50 €"},
+      {es:"Espumoso Champan MUM", en:"Mumm Champagne", price:"51.00 €"}
+    ]},
+    {es:"Cervezas y sidras", en:"Beers & ciders", fr:"Bières & cidres", de:"Biere & Cidre", nl:"Bieren & ciders", ru:"Пиво и сидр", it:"Birre e sidri", pt:"Cervejas e sidras", items:[
+      {es:"Cerveza 1906 reserva 20cl", en:"1906 Reserva beer 20cl", price:"1.50 €"},
+      {es:"Cerveza dorada limon 0.5", en:"Golden lemon beer 0.5L", price:"1.40 €"},
+      {es:"Sidra ladron de manzanas", en:"Ladrón de Manzanas cider", price:"1.95 €"},
+      {es:"Cerveza paulaner", en:"Paulaner beer", price:"3.50 €"},
+      {es:"La choufe verlga", en:"La Chouffe beer (Belgian)", price:"3.50 €"},
+      {es:"Estrella Galicia", en:"Estrella Galicia beer", price:"1.60 €"}
+    ]},
+    {es:"Refrescos y agua", en:"Soft drinks & water", fr:"Boissons & eau", de:"Softdrinks & Wasser", nl:"Frisdrank & water", ru:"Напитки и вода", it:"Bibite e acqua", pt:"Refrigerantes e água", items:[
+      {es:"Coca - cola original", en:"Coca-Cola Original", price:"1.80 €"},
+      {es:"Cocacola 0", en:"Coca-Cola Zero", price:"1.80 €"},
+      {es:"Agua solan de cabras 20", en:"Solán de Cabras water 20cl", price:"1.25 €"},
+      {es:"fanta", en:"Fanta", price:"1.80 €"},
+      {es:"Sprite", en:"Sprite", price:"1.80 €"},
+      {es:"Nestea Mango piña", en:"Nestea mango & pineapple", price:"2.20 €"},
+      {es:"Acuarius limon", en:"Aquarius lemon", price:"2.20 €"},
+      {es:"Fanta limon", en:"Fanta lemon", price:"1.80 €"},
+      {es:"TONICA SABORES", en:"FLAVOURED TONIC", price:"2.50 €"},
+      {es:"AGUA GRANDE- DE SOLAN", en:"LARGE SOLÁN WATER", price:"2.50 €"},
+      {es:"AGUA CON GAS", en:"SPARKLING WATER", price:"1.50 €"}
+    ]},
+    {es:"Chocolates y bombones", en:"Chocolates & pralines", fr:"Chocolats & pralines", de:"Schokolade & Pralinen", nl:"Chocolade & bonbons", ru:"Шоколад и конфеты", it:"Cioccolato e cioccolatini", pt:"Chocolates e bombons", items:[
+      {es:"Caramelos gardiners", en:"Gardiners sweets", price:"16.50 €"},
+      {es:"Caramelos flores", en:"Flower sweets", price:"15.40 €"},
+      {es:"Caramelos mariposas", en:"Butterfly sweets", price:"16.50 €"},
+      {es:"Chocolatina al wiski", en:"Whisky chocolate bar", price:"4.35 €"},
+      {es:"Chocolate velga bliss", en:"Belgian Bliss chocolate", price:"21.40 €"},
+      {es:"Bombones pralibel", en:"Pralibel pralines", price:"24.60 €"},
+      {es:"Chocolates lava canarias", en:"Canarian lava chocolates", price:"8.75 €"},
+      {es:"Tejas mixtas", en:"Mixed tejas (almond tuiles)", price:"13.50 €"}
+    ]},
+    {es:"Productos para vender", en:"Shop products", fr:"Produits boutique", de:"Produkte zum Verkauf", nl:"Winkelproducten", ru:"Товары магазина", it:"Prodotti in vendita", pt:"Produtos da loja", items:[
+      {es:"Pack de mermelada de Higo y crema Guayaba", en:"Fig jam & guava cream pack", price:"3.75 €", shop:true},
+      {es:"Mermelada de HIGO", en:"Fig jam", price:"3.20 €", shop:true},
+      {es:"Mermelada de higo : El masapé La gomera 1987", en:"Fig jam — El Masapé, La Gomera 1987", price:"3.20 €", shop:true},
+      {es:"Salsa : mojo Picón (salsa picante )", en:"Sauce: mojo Picón (spicy sauce)", price:"4.10 €", shop:true},
+      {es:"Mojo palmero con almendras", en:"Palmero mojo with almonds", price:"3.10 €", shop:true},
+      {es:"ALMOGROTE", en:"ALMOGROTE (spicy cheese spread)", price:"6.38 €", shop:true},
+      {es:"Pack de 3 mojos", en:"Pack of 3 mojo sauces", price:"7.96 €",
+        descEs:"( mojo rojo , almogrote , mojo cilantro )", descEn:"(red mojo, almogrote, coriander mojo)", descFr:"(mojo rouge, almogrote, mojo à la coriandre)", descDe:"(rotes Mojo, Almogrote, Koriander-Mojo)", descNl:"(rode mojo, almogrote, koriander-mojo)", descRu:"(красный мохо, альмогроте, мохо с кинзой)", descIt:"(mojo rosso, almogrote, mojo al coriandolo)", descPt:"(mojo vermelho, almogrote, mojo de coentros)", shop:true},
+      {es:"Salsa : mojo suave (salsa suave )", en:"Sauce: mild mojo (mild sauce)", price:"2.56 €", shop:true},
+      {es:"Salsa : mojo verde  (salsa con cilantro )", en:"Sauce: green mojo (coriander sauce)", price:"2.56 €", shop:true},
+      {es:"GALLETAS GOMERAS", en:"LA GOMERA BISCUITS", price:"6.24 €", shop:true}
+    ]},
+    {es:"Aceites", en:"Oils", fr:"Huiles", de:"Öle", nl:"Oliën", ru:"Масла", it:"Oli", pt:"Azeites", items:[
+      {es:"Aceitera cazorla", en:"Cazorla oil cruet", price:"18.50 €"},
+      {es:"Aceite de cazorla 500", en:"Cazorla olive oil 500ml", price:"7.95 €"},
+      {es:"Aceite cazorla 750", en:"Cazorla olive oil 750ml", price:"10.95 €"},
+      {es:"Cazorla gran seleccion", en:"Cazorla Grand Selection", price:"19.80 €"},
+      {es:"Aceite promo de viernes", en:"Friday special olive oil", price:"8.50 €"}
+    ]},
+    {es:"Miel", en:"Honey", fr:"Miel", de:"Honig", nl:"Honing", ru:"Мёд", it:"Miele", pt:"Mel", items:[
+      {es:"Miel de flores La Palma", en:"La Palma flower honey", price:"1.50 €"},
+      {es:"Miel de palma", en:"Palm honey", price:"5.85 €"}
+    ]},
+    {es:"Embutidos por piezas", en:"Cured meats, whole pieces", fr:"Charcuterie à la pièce", de:"Wurstwaren, ganze Stücke", nl:"Vleeswaren per stuk", ru:"Колбасные изделия (целые)", it:"Salumi a pezzo intero", pt:"Enchidos por peça", items:[
+      {es:"Morcon 100% 5 jotas", en:"100% Ibérico morcón, 5 Jotas", price:"64.30 €"},
+      {es:"Presa media caña 5 jotas", en:"Presa, half piece, 5 Jotas", price:"49.90 €"},
+      {es:"Lomo media caña 5 jotas", en:"Loin, half piece, 5 Jotas", price:"49.80 €"},
+      {es:"Jabuguitos", en:"Mini Jabugo sausages", price:"5.60 €"},
+      {es:"punta chorizo", en:"chorizo tip", price:"9.90 €"}
+    ]},
+    {es:"Jamones ibéricos por piezas", en:"Whole Ibérico hams", fr:"Jambons ibériques entiers", de:"Ganze Ibérico-Schinken", nl:"Hele Ibérico-hammen", ru:"Хамон иберико целиком", it:"Prosciutti iberici interi", pt:"Presuntos ibéricos inteiros", items:[
+      {es:"Pieza jamon 100% sanchez romero carvajal", en:"Whole 100% Ibérico ham, Sánchez Romero Carvajal", price:"485.90 €"},
+      {es:"Pieza Jamon cebo de campo", en:"Whole cebo de campo ham", price:"295.60 €"},
+      {es:"Pieza Jamon de cebo", en:"Whole cebo ham", price:"245.80 €"}
+    ]},
+    {es:"Servicios", en:"Services", fr:"Services", de:"Service", nl:"Diensten", ru:"Услуги", it:"Servizi", pt:"Serviços", items:[
+      {es:"Descorche", en:"Corkage", price:"6.00 €"},
+      {es:"Servicio mesa", en:"Table service", price:"5.00 €"},
+      {es:"Jamon Cortado y Envasado Cuchillo", en:"Hand-carved & vacuum-packed ham", price:"65.00 €"}
+    ]},
+    {es:"Hoteles", en:"Hotel amenities", fr:"Articles pour hôtels", de:"Hotelartikel", nl:"Hotelartikelen", ru:"Товары для отелей", it:"Articoli per hotel", pt:"Artigos para hotéis", items:[
+      {es:"Mini sobres", en:"Mini sachets", price:"2.35 €",
+        descEs:"Mini sobres  30g brida blanca", descEn:"Mini sachets, 30g, white pack", descFr:"Mini sachets, 30g, emballage blanc", descDe:"Mini-Tütchen, 30g, weiße Verpackung", descNl:"Mini-zakjes, 30g, witte verpakking", descRu:"Мини-пакетики, 30г, белая упаковка", descIt:"Mini bustine, 30g, confezione bianca", descPt:"Mini saquetas, 30g, embalagem branca"}
+    ]}
+  ];
+  if (window.MENU_DATA && window.MENU_DATA.length) { DATA = window.MENU_DATA; }
+
+  function esc(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function slug(esTitle,i){
+    return "cat-" + i + "-" + esTitle.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+  }
+
+  var rail = document.getElementById("rail");
+  var catalog = document.getElementById("catalog");
+  var langSelect = document.getElementById("langSelect");
+  var navRail = document.getElementById("navRail");
+  var hamburgerBtn = document.getElementById("hamburgerBtn");
+  var railClose = document.getElementById("railClose");
+  var currentLang = "es";
+  var io = null;
+
+  function openDrawer(){
+    navRail.classList.add("open");
+    navRail.setAttribute("aria-hidden", "false");
+    hamburgerBtn.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+  function closeDrawer(){
+    navRail.classList.remove("open");
+    navRail.setAttribute("aria-hidden", "true");
+    hamburgerBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+  hamburgerBtn.addEventListener("click", openDrawer);
+  railClose.addEventListener("click", closeDrawer);
+  navRail.addEventListener("click", function(e){ if(e.target === navRail) closeDrawer(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
+
+  function build(lang){
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    langSelect.value = lang;
+
+    if(io){ io.disconnect(); }
+    rail.innerHTML = "";
+    catalog.innerHTML = "";
+
+    var sectionEls = [];
+    var chipEls = [];
+    var nextNum = 1;
+
+    DATA.forEach(function(cat, i){
+      var displayTitle = cat[lang] || cat.es;
+      var id = slug(cat.es, i);
+      var blockSize = Math.ceil(cat.items.length / 10) * 10;
+      var blockStart = nextNum;
+      nextNum = blockStart + blockSize;
+
+      var chip = document.createElement("button");
+      chip.className = "chip";
+      chip.type = "button";
+      chip.textContent = displayTitle;
+      chip.addEventListener("click", function(){
+        closeDrawer();
+        document.getElementById(id).scrollIntoView({
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start"
+        });
+      });
+      rail.appendChild(chip);
+      chipEls.push({id:id, el:chip});
+
+      var section = document.createElement("section");
+      section.className = "cat";
+      section.id = id;
+
+      var head = document.createElement("div");
+      head.className = "cat-head";
+      head.innerHTML =
+        '<div class="cat-badge">' + String(i+1).padStart(2,"0") + '</div>' +
+        '<h2 class="cat-title">' + esc(displayTitle) + '</h2>';
+      section.appendChild(head);
+
+      var grid = document.createElement("div");
+      grid.className = "grid";
+
+      cat.items.forEach(function(it, idx){
+        var name = nameFor(it, lang);
+        var gloss = glossFor(it, lang);
+        var desc = descFor(it, lang);
+        var num = String(blockStart + idx).padStart(3,"0");
+        var row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML =
+          '<span class="row-num">' + num + '</span>' +
+          '<div class="row-main">' +
+            '<span class="row-name">' + esc(name) + '</span>' +
+            (gloss ? '<span class="row-gloss">(' + esc(gloss) + ')</span>' : '') +
+            (it.shop ? '<span class="row-tag">' + esc(STR[lang].shopTag) + '</span>' : '') +
+            (desc ? '<span class="row-desc">' + esc(desc) + '</span>' : '') +
+          '</div>' +
+          '<div class="leader"></div>' +
+          '<div class="row-price">' + esc(it.price) + '</div>';
+        grid.appendChild(row);
+      });
+
+      section.appendChild(grid);
+      catalog.appendChild(section);
+      sectionEls.push(section);
+    });
+
+    document.getElementById("brandSubtitle").textContent = STR[lang].subtitle;
+    document.getElementById("footerLegal").textContent = STR[lang].priceNote;
+
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var match = chipEls.find(function(c){ return c.id === entry.target.id; });
+        if(match) match.el.classList.toggle("active", entry.isIntersecting);
+      });
+    }, { rootMargin: "-115px 0px -75% 0px", threshold: 0 });
+    sectionEls.forEach(function(s){ io.observe(s); });
+  }
+
+  langSelect.addEventListener("change", function(){
+    if(LANGS.indexOf(this.value) !== -1 && this.value !== currentLang) build(this.value);
+  });
+
+  build("es");
+})();
+</script>
+
+</body></html>
