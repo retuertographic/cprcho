@@ -4,4 +4,4 @@ Carta digital multilingüe (ES, EN, FR, DE, NL, RU, IT, PT) de El Capricho de Co
 
 - `index.html` — página completa (estilos, logo y carta integrados).
 - `menu-data.js` — opcional: define `window.MENU_DATA` para sustituir la carta.
-- `.github/workflows/deploy.yml` — despliegue automático a GitHub Pages.
+- Publicado con GitHub Pages (Deploy from a branch) en https://retuertographic.github.io/cprcho/
